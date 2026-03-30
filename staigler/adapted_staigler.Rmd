@@ -1,5 +1,13 @@
-## Staigler et al Adapation
+---
+title: "Adaptation of Staigler et al's Composite Method"
+author: "James Henderson"
+date: "`r format(Sys.Date(), '%B %d, %Y')`"
+output:
+  html_document:
+    theme: cosmo
+---
 
+## Staigler et al Adapation
 
 ### Preliminaries and notation
 The basic algorithm suggested by Staigler et al consists of the following
@@ -21,9 +29,9 @@ measure $k$.
 1. **Estimate risk adjusted cluster-level means for each measure.**  
     1. Let $p_{ijk}(x_{ij}) = \mathbb{P}[O_{ijk} = 1 | X_{ij} = x_{ij}]$ and
      estimate $p_{ijk}$ with
-     $\hat p_{ijk}(x_{ij})$ using logistic regression or another method.  
-    1. Let $E_{ik} = \frac{1}{n_{ik}} \sum_j \hat p_{ijk}$,
-     $O_{ik} = \frac{1}{n_{ik}} \sum_j \hat p_{ijk}$ and
+     $\hat{p}_{ijk}(x_{ij})$ using logistic regression or another method.  
+    1. Let $E_{ik} = \frac{1}{n_{ik}} \sum_j \hat{p}_{ijk}$,
+     $O_{ik} = \frac{1}{n_{ik}} \sum_j \hat{p}_{ijk}$ and
      $Y_{ik} = O_{ik} / E_{ik}$.  
 1. **Estimate the within cluster sampling variance.**
   $V_i \in \mathbb{R}^{k \times k}$.  
@@ -34,9 +42,9 @@ measure $k$.
     $\mu_{i} := \mathbb{E}[Y_{i\cdot}] = \beta_0 + \eta_{p(i)} + \gamma_i$. 
 1. **Estimate the variance-covariance of the cluster-level means.**
    $\Sigma := \mathbb{V}[\mu_{i}] \in \mathbb{R}^{k \times k}$. 
-1. **Compute weights.** $W_i := \left(\hat \Sigma + \hat V_{i}\right)$.
+1. **Compute weights.** $W_i := \left(\hat{\Sigma} + \hat{V}_{i}\right)$.
 1. **Compute risk-adjusted composites.**
-   $\Theta_i := Y_i W_i + \hat \mu_i (I - W_i)$. 
+   $\Theta_i := Y_i W_i + \hat{\mu}_i (I - W_i)$. 
 
 ### Estimating $V_i$
 
@@ -44,7 +52,7 @@ For each cluster (plan + subgroup) $i$, $V_i$ is the sampling
 variance-covariance of the risk-adjusted estimates $Y_i$. Estimate $V_i$
 using the steps below.
 
-1. For each measure, compute residuals $r_{ijk} = y_{ijk} - \hat p_{ijk}$.  
+1. For each measure, compute residuals $r_{ijk} = y_{ijk} - \hat{p}_{ijk}$.  
 1. Mean center $r_{ijk}$ within each cluster,
 $\tilde r_{ijk} = r_{ijk} - \frac{1}{n_i(k)}\sum_j r_{ijk}$. If any clusters
 have fewer than 2 individuals contributing to measure $k$, set $r_{ijk}$ to
@@ -94,8 +102,9 @@ $$
 $$
 
 
-Then, estimate $\hat\mu_i = \hat \beta_0 + \hat\eta_{p(i)} + \hat\gamma_i$
-where $\hat\eta_p$ and $\hat\gamma_i$ are BLUPs.
+Then, estimate 
+$\hat{\mu}_i = \hat{\beta}_0 + \hat{\eta}_{p(i)} + \hat{\gamma}_i$
+where $\hat{\eta}_p$ and $\hat{\gamma}_i$ are BLUPs.
 
 Computationally, this will
 be much more expensive than a model using the weighted cluster-level means as
@@ -114,7 +123,7 @@ In the original, the estimator is defined as,
 
 $$
 \tilde \Sigma_{k,k'} = 
-  \frac{1}{n_c} \sum_i (Y_i - \hat\mu_i)(Y_i - \hat\mu_i)' - V_i.  
+  \frac{1}{n_c} \sum_i (Y_i - \hat{\mu}_i)(Y_i - \hat{\mu}_i)' - V_i.  
 $$
 
 There is, however, a follow on note about weighting the estimation. If I am
@@ -122,14 +131,14 @@ correctly interpreting this note the weights are the product of the sample
 sizes for two measures. 
 
 $$
-\tilde \Sigma = \frac{1}{\sum_i n_i(k)n_i(k')} 
+\tilde{\Sigma} = \frac{1}{\sum_i n_i(k)n_i(k')} 
   \sum_i n_i(k)n_i(k') (
-    (Y_i(k) - \hat\mu_i(k))(Y_i(k') - \hat\mu_i(k')) - V_{i}(k,k')
+    (Y_i(k) - \hat{\mu}_i(k))(Y_i(k') - \hat{\mu}_i(k')) - V_{i}(k,k')
   ).  
 $$
 
-There is the potential that the above estimator $\tilde \Sigma$ will not be
-positive definite. Let $\hat \Sigma$ be the nearest positive definite matrix. 
+There is the potential that the above estimator $\tilde{\Sigma}$ will not be
+positive definite. Let $\hat{\Sigma}$ be the nearest positive definite matrix. 
 In R, there is a function `Matrix::nearPD()` that will do this. If you need to
 do this elsewhere, a simplified way to do this is to estimate the eigen
 decomposition (or singular-value decomposition), find the smallest negative
