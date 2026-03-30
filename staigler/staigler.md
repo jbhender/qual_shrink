@@ -10,28 +10,30 @@ for person $j$ in cluster $i$. In our adaptation, clusters will be defined
 as subgroups within health care plans. When needed we will denote the subgroup
 and plan corresponding to cluster $i$ by $g(i)$ and $p(i)$, respectively.  
 
-Let $K$ be the number of measures and $n_c$ be the number of clusters. Also, 
-let $n_i$ be the number of unique individuals in cluster $i$ and $n_i(k)$ the 
-subset contributing to measure $k$. Finally, let $N = \sum_i n_i$ be the total
-number of unique individuals and $N(k)$ the total for measure $k$. 
+Let $K$ be the number of measures and $n_c$ the number of clusters. Let $n_i$
+be the number of unique individuals in cluster $i$ and $n_i(k)$ the number in 
+the subset contributing to measure $k$. Finally, let $N = \sum_i n_i$ be the
+total number of unique individuals and $N(k) = \sum_i n_i$(k)$ the total for
+measure $k$. 
 
 ### Overview
 
-1. Estimate risk adjusted cluster-level means for each measure 
-  a. Let $p_{ijk} = \mathbb{P}[O_{ijk} = 1]$ and estimate $p_{ijk}$ with
-    $\hat p_{ijk}$ using logistic regression or another method.
+1. **Estimate risk adjusted cluster-level means for each measure.**  
+  a. Let $p_{ijk}(x_{ij}) = \mathbb{P}[O_{ijk} = 1 | X_{ij} = x_{ij}]$ and
+     estimate $p_{ijk}$ with
+     $\hat p_{ijk}(x_{ij})$ using logistic regression or another method.  
   a. Let $E_{ik} = \frac{1}{n_{ik}} \sum_j \hat p_{ijk}$,
      $O_{ik} = \frac{1}{n_{ik}} \sum_j \hat p_{ijk}$ and
      $Y_{ik} = O_{ik} / E_{ik}$.  
 1. Estimate the within-cluster sampling variance,
-  $V_i \in \mathbb{R}^{k \timex k}$.  
+  $V_i \in \mathbb{R}^{k \times k}$.  
 1. Estimate cluster level predictions (update this for adapated model),
-   $\mu_{i\dot} := \mathbb{E}[Y_{i\dot} | Z] = Z\Beta$.
+   $\mu_{i\dot}(z_i) := \mathbb{E}[Y_{i\dot} | Z_i = z_i] = z_i\Beta$.
 1. Estimate the variance-covariance of the cluster-level means,
    $\Sigma := \mathbb{V}[\mu_{i\dot}] \in \mathbb{R}^{k \times k}$. 
-1. Compute weights, $W_i := \left(\hat \Sigma + \hat V_{i}\right)$.
+1. Compute weights, $W_i = \left(\hat \Sigma + \hat V_{i}\right)$.
 1. Compute risk-adjusted composites,
-   $\Theta_i := Y_i W_i + \hat \mu_i (I - W_i)$. 
+   $\Theta_i = Y_i W_i + \hat \mu_i (I - W_i)$. 
 
 ### Estimating $V_i$
 
